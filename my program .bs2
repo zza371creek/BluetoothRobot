@@ -1,0 +1,54 @@
+'{$STAMP BS2}
+nCount VAR Byte
+'Wait for the eb500 radio to be ready
+PAUSE 1000
+'Connect to the remote device
+SEROUT 1,84,["CON 00:11:67:B6:98:FB",CR]
+SERIN 0,84,[WAIT("ACK",CR)]
+'Wait for the connection to be established and switch into data mode.
+'When switching into data mode, a 300ms timeout is required to give the
+'module enough time to make the change.
+WaitForConnection:
+IF IN5 = 0 THEN WaitForConnection
+
+
+HIGH 6
+PAUSE 300
+DEBUG "Connection established",CR
+'send the messsage that i am connected.
+SEROUT 1,84,["connect",CR]
+'Send "Hello World" ten times
+'FOR nCount = 1 TO 10
+
+' loop forever until command comes in to stop.
+DO
+ ' PAUSE 300
+  'Switch to Command Mode and get command from computer
+  LOW 6
+  SERIN 0,84,[STR bData\1]
+  DEBUG STR bData\1
+  ' we just got the data back now firgure out which subprogram to run!
+
+
+  IF bData = "stopbot"  THEN
+    GOSUB stopbot ' go to the stop program and close connection space..
+
+  END IF
+' get info from robot and sent back to the computer
+
+
+LOOP
+'end loop
+
+
+
+
+
+
+
+
+stopbot:
+'shut down the connection!
+SEROUT 1,84,["dis",CR]
+SERIN 0,84,[WAIT(CR,">")]
+DEBUG "Disconnected",CR

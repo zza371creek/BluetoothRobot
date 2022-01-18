@@ -1,0 +1,28 @@
+'{$STAMP BS2}
+nCount VAR Byte
+'Wait for the eb500 radio to be ready
+PAUSE 1000
+'Connect to the remote device
+'SEROUT 1,84,["CON 00:11:67:B6:98:FB",CR]
+'SERIN 0,84,[WAIT("ACK",CR)]
+'Wait for the connection to be established and switch into data mode.
+'When switching into data mode, a 300ms timeout is required to give the
+'module enough time to make the change.
+WaitForConnection:
+IF IN5 = 0 THEN WaitForConnection
+HIGH 6
+PAUSE 300
+DEBUG "Connection established",CR
+'Send "Hello World" ten times
+FOR nCount = 1 TO 50
+SEROUT 1,84,["Hello World",CR]
+PAUSE 1000
+NEXT
+DEBUG "Done sending",CR
+'Switch to Command Mode
+LOW 6
+SERIN 0,84,[WAIT(CR,">")]
+'Disconnect from the remote device
+'SEROUT 1,84,["dis",CR]
+'SERIN 0,84,[WAIT(CR,">")]
+DEBUG "Disconnected",CR

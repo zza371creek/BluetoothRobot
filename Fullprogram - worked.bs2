@@ -1,0 +1,108 @@
+'run the wheels clockwise..
+
+' {$STAMP BS2}
+' {$PBASIC 2.5}
+
+bData VAR Byte
+ counter  VAR Word
+'Wait for the eb500 radio to be ready
+PAUSE 1000
+
+'Connect to the remote device
+'SEROUT 1,84,["CON 00:11:67:B6:98:FB",CR]
+'SERIN 0,84,[WAIT("ACK",CR)]
+'Wait for the connection to be established and switch into data mode.
+'When switching into data mode, a 300ms timeout is required to give the
+'module enough time to make the change.
+WaitForConnection:
+IF IN5 = 0 THEN WaitForConnection
+
+
+HIGH 6
+PAUSE 300
+
+'send the messsage that i am connected.
+SEROUT 1,84,["connect",CR]
+'Now get the imput from the robot and send it to the computer
+'this works!!!!!
+' loop forever until command comes in to stop.
+Main:
+  ' send the data to the computer for processing.
+
+
+
+ 'this waits for the data to come in before it will move on..
+  SERIN 0,84,[STR bData\1]
+  DEBUG STR bData\1
+
+
+  'we got data back now process what we want to do.
+  IF (bData = "f") THEN
+        GOSUB forward
+  ELSEIF (bData = "l")  THEN
+         GOSUB left
+  ELSEIF(bData = "b")    THEN
+         GOSUB backward
+  ELSEIF (bData = "r") THEN
+          GOSUB right
+  ELSE
+
+  ENDIF
+
+GOTO Main
+
+'--- sub things to do--------------------
+
+
+
+forward:
+
+
+   PULSOUT 13, 850
+   PULSOUT 12, 650
+   PAUSE 20
+RETURN
+
+left:
+    FOR counter =1 TO 20
+
+   PULSOUT 13, 650
+   PULSOUT 12, 650
+   PAUSE 20
+
+NEXT
+    PAUSE 200
+RETURN
+
+right:
+    FOR counter =1 TO 20
+
+   PULSOUT 13, 850
+   PULSOUT 12, 850
+   PAUSE 20
+
+NEXT
+    PAUSE 200
+RETURN
+
+ backward:
+    FOR counter =1 TO 20
+
+   PULSOUT 13, 650
+   PULSOUT 12, 850
+   PAUSE 20
+
+NEXT
+    PAUSE 200
+RETURN
+
+
+
+
+
+stopbot:
+'shut down the connection!
+SEROUT 1,84,["dis",CR]
+SERIN 0,84,[WAIT(CR,">")]
+DEBUG "Disconnected",CR
+RETURN

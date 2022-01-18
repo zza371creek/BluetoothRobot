@@ -1,0 +1,28 @@
+' **************************************************************************
+' Receive.bs2
+' A7 Engineering, 2003-2005
+'
+' This program is used with BASIC Stamp BS2 microcontroller modules with
+' an EmbeddedBlue eb500 radio module.
+'
+' Description
+' ===========
+' This program demonstrates reading data from the eb500 radio module and
+' displaying it in the debug window.
+'
+' Instructions
+' ============
+' 1. Verify that the eb500 module is connected properly to the AppMod
+'    header of the developent board.
+' 2. Compile and run this program.
+'
+' **************************************************************************
+'{$STAMP BS2}
+bData VAR Byte
+'Wait for the eb500 radio to be ready
+PAUSE 1000
+
+Main:
+  SERIN 0,84,[STR bData\1]
+  DEBUG STR bData\1
+  GOTO Main
