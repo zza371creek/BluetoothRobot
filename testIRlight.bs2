@@ -1,0 +1,35 @@
+
+'run the wheels clockwise..
+
+' {$STAMP BS2}
+' {$PBASIC 2.5}
+
+'test the wiskers.
+ irdetectleft  VAR Bit
+ irdetectright VAR Bit
+
+DO
+ FREQOUT 8, 1, 38500
+ irdetectleft = IN9
+
+ FREQOUT 2, 1, 38500
+ irdetectright =IN0
+
+ IF (irdetectleft = 0) THEN
+ HIGH 10
+ ELSE
+ LOW 10
+ ENDIF
+
+ IF (irdetectright = 0) THEN
+ HIGH 1
+ ELSE
+ LOW 1
+ ENDIF
+
+
+ DEBUG CRSRXY, 2, 3, BIN1 irdetectleft,
+      CRSRXY, 9, 3, BIN1 irdetectright
+ PAUSE 100
+
+LOOP
